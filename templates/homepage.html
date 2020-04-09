@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/CssProject2.css') }}">
+
+  </head>
+  <body class="homeBody">
+
+    {% block HomePage %}
+     {% if session.get("username") is not none: %}
+        <button type="submit" class="btn btn-warning btn-lg"style="font-family: Bangers;">Search</button>
+
+        {{session["username"]}}
+        <a href="/addChannel">click here</a>
+     {% endif %}
+    <form class="" action="/" method="post">
+   {% if session.get("username") is none: %}
+   <input type="text" name="username" value="" placeholder="Enter your Nickname">
+   <input type="submit" id="tologin" class="btn btn-primary btn-lg" value="Log In"style="font-family: Bangers;">
+   {% endif %}
+ {% endblock %}
+     </form>
+  </body>
+</html>

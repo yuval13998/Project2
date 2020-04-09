@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %}
+M&Y,{{ channel.channelname }}.
+{% endblock %}
+{% block head %}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+<script src="{{ url_for('static', filename='index.js') }}"></script>
+<link rel="shortcut icon" href="">
+{% endblock %}
+{% block body %}
+  Welcome to  {{ channel.channelname }}, M&YSocial experts.
+<div class="">
+<div >
+  <span id="len"></span>
+<ul id="postim">
+
+  {% if channel.posts is not none: %}
+  {% for post in channel.posts: %}
+     <li>{{post.str}}</li>
+  {% endfor %}
+  {% else: %}
+  <li>no chat</li>
+  {% endif %}
+</ul>
+<hr>
+</div>
+
+<div class="sendPost">
+  <input type="text"  id="newPost" name="newPost" value="1">
+  <button type="button" id="sendpost" name="">Send</button>
+</div>
+</div>
+
+{% endblock %}
