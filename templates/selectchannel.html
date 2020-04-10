@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block title %}
+M&Y, Getting started.
+{% endblock %}
+{% block head %}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+<script src="{{ url_for('static', filename='index.js') }}"></script>
+<link rel="shortcut icon" href="">
+{% endblock %}
+{% block body %}
+  WELLCOME to M&YSocial, select a chat:
+<form class="" action="/selectchannel" method="post">
+<div class="">
+  <select name="selectchannel" class="selectpicker">
+    {% for i in channels %}
+  <option>{{i.channelname}}</option>
+    {% endfor %}
+</select>
+<input type="submit" name="" value="Start chat!">
+</form>
+<hr>
+<a href="/creatChannel"><button type="button" name="button">+</button></a> 
+{% endblock %}

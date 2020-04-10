@@ -19,29 +19,32 @@ class Post():
         self.username = session["username"]
         realtime = time()
         result = localtime(realtime)
-        self.time = f"{result.tm_mday}/{result.tm_mon} {result.tm_hour}:{result.tm_min}"
+        min = result.tm_min
+        if result.tm_min < 10:
+            min = f"0{result.tm_min}"
+        self.time = f"{result.tm_mday}/{result.tm_mon} {result.tm_hour}:{min}"
         self.str = f"{self.content}        {self.username} {self.time}"
 
 
 class Channel():
-    posts = []
 
     def __init__(self, channelname):
         self.channelname = channelname
+        self.posts = []
 
     def addPost(self, post):
         self.posts.append(post)
 
-channels = []
-channelSelected = ""
+test = Channel("test")
+test1 = Channel("test1")
+channels = [test,test1]
+channelselected = {"channel": None}
 
 
 
-@app.route("/addChannel")
+@app.route("/logout")
 def addchannel():
-    test = Channel("test")
-
-    channels.append(test)
+    session["username"] = None
     return render_template("homepage.html")
 
 
@@ -58,21 +61,30 @@ def index():
 def newpost(data):
     content = data["content"]
     post = Post(content)
-    for channel in channels:
-        if channelSelected == channel.channelname:
-            channel.addPost(post)
-    emit("conversation", {"post_content":post.str, "postlen": len(channel.posts)}, broadcast=True)
+    if channelselected["channel"] != None:
+        channelselected["channel"].addPost(post)
+    emit("conversation", {"post_content":post.str}, broadcast=True)
 
 
-
-
-@app.route("/chat/<string:channelname>")
-def chat(channelname):
-    for channel in channels:
-        if channelname == channel.channelname:
-            channelSelected = channelname
-            return render_template("chat.html", channel = channel)
+@app.route("/creatChannel", methods=["POST", "GET"])
+def channelcreate():
+    if request.method == "GET":
+        return render_template("creatChannel.html")
+    newchannelname = request.form.get("newname")
+    newchannel = Channel(newchannelname)
+    channels.append(newchannel)
+    return render_template("chat.html", channel = newchannel)
 
 @app.route("/posts", methods=["POST"])
 def posts():
     return jsonify(channelSelected)
+
+@app.route("/selectchannel", methods=["POST", "GET"])
+def selected():
+    if request.method == "GET":
+        return render_template("selectchannel.html", channels = channels)
+    selected = request.form.get("selectchannel")
+    for channel in channels:
+        if selected == channel.channelname:
+            channelselected["channel"] = channel
+            return render_template("chat.html", channel = channel)

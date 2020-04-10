@@ -21,6 +21,5 @@ document.addEventListener('DOMContentLoaded', () => {
         const li = document.createElement('li');
         li.innerHTML = `new post: ${data.post_content}`;
         document.querySelector("#postim").append(li);
-        document.querySelector("#len").innerHTML = `${data.postlen}`;
     });
 });

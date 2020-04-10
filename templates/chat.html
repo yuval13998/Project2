@@ -11,6 +11,11 @@ M&Y,{{ channel.channelname }}.
 {% endblock %}
 {% block body %}
   Welcome to  {{ channel.channelname }}, M&YSocial experts.
+  <div class="sendPost">
+    <input type="text"  id="newPost" name="newPost" value=""  placeholder="Teharben lekan->">
+    <button type="button" id="sendpost" name="">Send</button>
+  </div>
+
 <div class="">
 <div >
   <span id="len"></span>
@@ -27,10 +32,7 @@ M&Y,{{ channel.channelname }}.
 <hr>
 </div>
 
-<div class="sendPost">
-  <input type="text"  id="newPost" name="newPost" value="1">
-  <button type="button" id="sendpost" name="">Send</button>
-</div>
+
 </div>
 
 {% endblock %}

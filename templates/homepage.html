@@ -10,10 +10,10 @@
 
     {% block HomePage %}
      {% if session.get("username") is not none: %}
-        <button type="submit" class="btn btn-warning btn-lg"style="font-family: Bangers;">Search</button>
+      <a href="/selectchannel">  <button type="submit" class="btn btn-warning btn-lg"style="font-family: Bangers;">Search</button></a>
 
         {{session["username"]}}
-        <a href="/addChannel">click here</a>
+        <a href="/logout">logout</a>
      {% endif %}
     <form class="" action="/" method="post">
    {% if session.get("username") is none: %}
