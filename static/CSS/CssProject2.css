@@ -39,12 +39,17 @@
   text-align: center;
   margin-top: 20px;
   font-size: 13px;
-  position:absolute;
+  position:fixed;
   bottom:0;
   width: 100%;
   left: 0;
   right: 0;
   margin: auto;
+  z-index: 9999;
+}
+
+#container {
+    position: relative;
 }
 /*---------------mobile friendly------*/
 @media (min-width: 450px){
@@ -90,4 +95,11 @@
 #tosignup, #tologin{
   margin: 10px;
 }
-/*------------------search page----------------------*/
+/*------------------ chat page -----------------------*/
+.mychat{
+  background-color: green;
+}
+
+.otherchat{
+  background-color: blue;
+}

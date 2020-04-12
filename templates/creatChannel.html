@@ -9,10 +9,47 @@
 <link rel="shortcut icon" href="">
 {% endblock %}
 {% block body %}
-  Welcome to  M&YSocial experts.
-  <form class="" action="/creatChannel" method="post">
+<script>
+document.addEventListener('DOMContentLoaded', () => {
 
-<input type="text" name="newname" value="">
-<input type="submit" name="" value="Create">
+    // Connect to websocket
+    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+    // When connected, configure buttons
+    socket.on('connect', () => {
+        document.querySelector("#createname").onclick = () => {
+          const newname = document.querySelector('#newname').value;
+          socket.emit('check_name_exist', {'newname': newname});
+        };
+        document.querySelector('#newname').addEventListener('keypress', function (e) {
+           if (e.key === 'Enter') {
+              e.preventDefault();
+              document.querySelector("#createname").click();
+            }
+         });
+      });
+        // when a result from valid name came...
+        socket.on('result_is_exist', data => {
+          if (data.result == "True") {
+            document.querySelector("#validation_error").style.visibility = "hidden";
+            document.querySelector("#newname").style.borderColor = "green";
+            document.querySelector("#createform").submit();
+          }
+          else {
+            document.querySelector("#newname").style.borderColor = "red";
+            document.querySelector("#validation_error").style.visibility = "visible";
+          }
+        });
+    });
+
+
+</script>
+  Welcome to  M&YSocial experts.
+  <form class="" id="createform" action="/creatChannel" method="post">
+
+<input type="text" name="newname" id="newname" value="">
+<input type="button" name="createname"  id="createname" value="Create">
+<br>
+<small id="validation_error" style="visibility:hidden;color:red;">this chat name alredy exist!</small>
   </form>
+
 {% endblock %}

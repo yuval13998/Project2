@@ -23,7 +23,7 @@ class Post():
         if result.tm_min < 10:
             min = f"0{result.tm_min}"
         self.time = f"{result.tm_mday}/{result.tm_mon} {result.tm_hour}:{min}"
-        self.str = f"{self.content}        {self.username} {self.time}"
+        self.str = f"<h3>{self.content}</h3> <h6> {self.username} {self.time}</h6>"
 
 
 class Channel():
@@ -34,6 +34,11 @@ class Channel():
 
     def addPost(self, post):
         self.posts.append(post)
+
+
+    def limitposts(self):
+        if len(self.posts) > 100:
+            self.posts.pop(0)
 
 test = Channel("test")
 test1 = Channel("test1")
@@ -63,7 +68,19 @@ def newpost(data):
     post = Post(content)
     if channelselected["channel"] != None:
         channelselected["channel"].addPost(post)
+        channelselected["channel"].limitposts();
     emit("conversation", {"post_content":post.str}, broadcast=True)
+
+@socketio.on("check_name_exist")
+def check_name_exist(data):
+    newname = data["newname"]
+    notexist = "True"
+    if newname == "":
+        notexist = "False"
+    for channel in channels:
+        if channel.channelname == newname:
+            notexist = "False"
+    emit("result_is_exist", {"result":notexist}, broadcast=True)
 
 
 @app.route("/creatChannel", methods=["POST", "GET"])
@@ -73,6 +90,7 @@ def channelcreate():
     newchannelname = request.form.get("newname")
     newchannel = Channel(newchannelname)
     channels.append(newchannel)
+    channelselected["channel"] = newchannel
     return render_template("chat.html", channel = newchannel)
 
 @app.route("/posts", methods=["POST"])
@@ -88,3 +106,19 @@ def selected():
         if selected == channel.channelname:
             channelselected["channel"] = channel
             return render_template("chat.html", channel = channel)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+if __name__ == '__main__':
+    socketio.run(app)
