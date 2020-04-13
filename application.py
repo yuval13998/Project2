@@ -23,7 +23,7 @@ class Post():
         if result.tm_min < 10:
             min = f"0{result.tm_min}"
         self.time = f"{result.tm_mday}/{result.tm_mon} {result.tm_hour}:{min}"
-        self.str = f"<h3>{self.content}</h3> <h6> {self.username} {self.time}</h6>"
+        self.str = f"<h3>{self.content}</h3> <h6 align='center'> {self.username} {self.time}</h6>"
 
 
 class Channel():
@@ -95,7 +95,17 @@ def channelcreate():
 
 @app.route("/posts", methods=["POST"])
 def posts():
-    return jsonify(channelSelected)
+    start = int(request.form.get("start") or 0)
+    end = int(request.form.get("end") or (start + 9))
+    if channelselected["channel"] != None:
+        content = []
+        if len(channelselected["channel"]) < end:
+            for item in range(start,len(channelselected["channel"])+1):
+                content.append(channelselected["channel"]["item"].str)
+        else:
+            for item in range(start,end+1):
+                content.append(channelselected["channel"]["item"].str)
+        return jsonify(content)
 
 @app.route("/selectchannel", methods=["POST", "GET"])
 def selected():

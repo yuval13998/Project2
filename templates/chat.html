@@ -10,9 +10,21 @@ M&Y,{{ channel.channelname }}.
 <link rel="shortcut icon" href="">
 {% endblock %}
 {% block body %}
+<script id="post" type="text/x-handlebars-template">
+    <div class="post">
+        {% raw -%}
+            {{ contents }}
+        {%- endraw %}
+        <button class="hide">Hide</button>
+    </div>
+</script>
 <script>
-document.addEventListener('DOMContentLoaded', () => {
 
+let counter = 1;
+const quantity = 10;
+
+document.addEventListener('DOMContentLoaded', () => {
+  load();
     // Connect to websocket
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
     // When connected, configure buttons
@@ -21,7 +33,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // Each button should emit a "submit vote" event
         document.querySelector('#sendpost').onclick = ()  => {
                 const content = document.querySelector("#newPost").value;
-                socket.emit('add post', {'content': content});
+                if (checkempty(content)) {
+                  document.querySelector("#newPost").style.borderColor = "black";
+                  socket.emit('add post', {'content': content});
+                }
+                else{
+                  document.querySelector("#newPost").style.borderColor = "red";
+                }
+
             };
 
         document.querySelector('#newPost').addEventListener('keypress', function (e) {
@@ -34,6 +53,12 @@ document.addEventListener('DOMContentLoaded', () => {
      });
 
 
+       function checkempty(str){
+         if (str == "") {
+           return false;
+         }
+         return true;
+       }
     // When a new vote is announced, add to the unordered list
     socket.on('conversation', data => {
         const li = document.createElement('li');
@@ -43,9 +68,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     });
 
-
   });
+  function load()
+  {
+    const start = counter;
+    const end = start + quantity - 1;
+    counter = end + 1;
+
+    const request = new XMLHttpRequest();
+    request.open('POST', '/posts');
+    request.onload = () => {
+        const data = JSON.parse(request.responseText);
+        data.forEach(add_post);
+  };
+  const data = new FormData();
+  data.append('start', start);
+  data.append('end', end);
+  request.send(data);
+};
+// Add a new post with given contents to DOM.
+const post_template = Handlebars.compile(document.querySelector('#post').innerHTML);
+function add_post(contents) {
+
+    // Create new post.
+    const post = post_template({'contents': contents});
+
+    // Add post to DOM.
+    document.querySelector('#posts').innerHTML += post;
+}
 </script>
+
+
+
 <div class="" style="display:table;margin:auto auto;">
 <h2>
   Welcome to {{ channel.channelname }}, M&YSocial experts.</h2>
@@ -67,6 +121,9 @@ document.addEventListener('DOMContentLoaded', () => {
 <hr>
 </div>
 
+
+</div>
+<div class="" id="posts">
 
 </div>
 
